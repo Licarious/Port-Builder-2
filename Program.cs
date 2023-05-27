@@ -371,9 +371,11 @@ internal class Program
             //calculate center of prov
             prov.GetCenter();
 
-            //average city and center to get a point to start from
-            (int x, int y) startPoint = ((int)Math.Round((prov.center.x + prov.cityCenter.x) / 2.0), (int)Math.Round((prov.center.y + prov.cityCenter.y) / 2.0));
-            
+            (int x, int y) startPoint = prov.center;
+            if (prov.cityCenter != (0, 0)) {
+                //average city and center to get a point to start from
+                startPoint = ((int)Math.Round((prov.center.x + prov.cityCenter.x) / 2.0), (int)Math.Round((prov.center.y + prov.cityCenter.y) / 2.0));
+            }
             //find the coord in the borderingCoordSet that is closest to the cityCenter of the prov, that is also in the prov.coords
             (int x, int y) closestCoord = provCoast.OrderBy(x => Math.Sqrt(Math.Pow(x.x - startPoint.x, 2) + Math.Pow(x.y - startPoint.y, 2))).First();
 
@@ -413,6 +415,7 @@ internal class Program
             }
             else {
                 Console.WriteLine("No possible port naval ids found for prov: " + prov.id);
+                return;
             }
 
             Console.WriteLine("provID: " + prov.id + " center: "+ prov.port.position);
@@ -575,6 +578,12 @@ internal class Program
         
         //parse city file
         void ParseCities() {
+            //if there is no localDir + @"\_Input\city_locators.txt" file return
+            if (!File.Exists(localDir + @"\_Input\city_locators.txt")) {
+                Console.WriteLine("No city_locators.txt file found");
+                return;
+            }
+
             //read file
             string[] lines = File.ReadAllLines(localDir + @"\_Input\city_locators.txt");
 
