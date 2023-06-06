@@ -293,7 +293,7 @@ internal class Program
             List<Province> coastalRiverProvs = FindMissingPorts(provDict, "river");
 
             //create port.csv and port_locator.txt in the output folder
-            using StreamWriter portWriter = new(localDir + @"\_Output\port.csv");
+            using StreamWriter portWriter = new(localDir + @"\_Output\ports.csv");
             using StreamWriter portLocatorWriter = new(localDir + @"\_Output\port_locator_output.txt");
 
 
@@ -301,7 +301,7 @@ internal class Program
             portWriter.WriteLine("LandProvince;SeaZone;x;y;");
             foreach (Province prov in provDict.Values) {
                 if (prov.port != null) {
-                    portWriter.WriteLine(prov.port.ToString());
+                    portWriter.Write(prov.port.WritePort());
                 }
             }
 
