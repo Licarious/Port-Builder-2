@@ -9,3 +9,5 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Port_Builder_2
 build_property.ProjectDir = B:\desktop\-mods-\INR\Updater\Port Builder 2\Port-Builder-2\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 

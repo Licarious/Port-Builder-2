@@ -1,5 +1,6 @@
 ﻿using PortBuilder;
 using System.Drawing;
+using System.Globalization;
 
 internal class Program
 {
@@ -179,8 +180,9 @@ internal class Program
                 string l1 = CleanLine(line);
                 if (l1.Length == 0) continue;
 
-                //split the line on ;
-                string[] parts = l1.Split(';');
+                //split the line on ; or ,
+                string[] parts = l1.Split(';', ',');
+                //string[] parts = l1.Split(';');
                 //try parse int
                 if (int.TryParse(parts[0], out int id)) {
                     Port port = new(id, int.Parse(parts[1]), float.Parse(parts[2]), float.Parse(parts[3]));
@@ -275,10 +277,10 @@ internal class Program
             //loop through all provs
             foreach (Province prov in provDict.Values) {
                 //if the intersiction of prov.coords and borderingSeaCoordsSet is not empty set prov.coastal to sea
-                if (prov.coords.Intersect(borderingSeaCoordsSet).Count() > 0) {
+                if (prov.coords.Intersect(borderingSeaCoordsSet).Any()) {
                     prov.coastal = "sea";
                 }
-                else if (prov.coords.Intersect(borderingRiverCoordsSet).Count() > 0) {
+                else if (prov.coords.Intersect(borderingRiverCoordsSet).Any()) {
                     prov.coastal = "river";
                 }
 
@@ -305,16 +307,16 @@ internal class Program
                 }
             }
 
-            if (seaPortScale >= 0) {
+            if (seaPortScale > 0) {
                 portWriter.WriteLine("#AutoSea");
                 foreach (Province prov in coastalSeaProvs) {
-                    FindPortPosition(provDict, prov, borderingSeaCoordsSet, "sea_zones", portWriter, portLocatorWriter);
+                    FindPortPosition(provDict, prov, borderingSeaCoordsSet, "sea_zones", portWriter, portLocatorWriter, seaPortScale);
                 }
             }
-            if (riverPortScale >= 0) {
+            if (riverPortScale > 0) {
                 portWriter.WriteLine("#AutoRiver");
                 foreach (Province prov in coastalRiverProvs) {
-                    FindPortPosition(provDict, prov, borderingRiverCoordsSet, "river_provinces", portWriter, portLocatorWriter);
+                    FindPortPosition(provDict, prov, borderingRiverCoordsSet, "river_provinces", portWriter, portLocatorWriter, riverPortScale);
                 }
             }
 
@@ -338,7 +340,7 @@ internal class Program
                 }
             }
             //save image
-            bmp.Save(localDir + @"\_Output\debug_"+name+".png");
+            bmp.Save(localDir + @"\_Output\debug_" + name + ".png");
         }
 
         List<Province> FindMissingPorts(Dictionary<Color, Province> provDict, string coastalType) {
@@ -358,7 +360,7 @@ internal class Program
 
         }
 
-        void FindPortPosition(Dictionary<Color, Province> provDict, Province prov, HashSet<(int x, int y)> borderingCoordSet, string type, StreamWriter portWriter, StreamWriter portLocatorWriter) {
+        void FindPortPosition(Dictionary<Color, Province> provDict, Province prov, HashSet<(int x, int y)> borderingCoordSet, string type, StreamWriter portWriter, StreamWriter portLocatorWriter, float scale) {
             //create a hashset of all coords that are in both prov.coords and borderingCoordSet
             HashSet<(int x, int y)> provCoast = prov.coords.Intersect(borderingCoordSet).ToHashSet();
 
@@ -447,90 +449,16 @@ internal class Program
             }
             Console.WriteLine(prov.port+"\n");
 
-            if (type.Contains("sea")) prov.port.scale = seaPortScale;
-            else prov.port.scale = riverPortScale;
+            prov.port.scale = scale;
 
             //vertical correction
             prov.port.position = (prov.port.position.x, bmp.Height - prov.port.position.y);
+            
 
             portWriter.Write(prov.port.WritePort());
             portLocatorWriter.Write(prov.port.WriteLocator());
 
         }
-
-        float SweepCheck(int sweepSize, (int, int) centerInt, Province p1, Province p2) {
-            //loaer and uper bounds of the sweep
-            int lower = (sweepSize / 2) - sweepSize + 1;
-            int upper = sweepSize / 2 + 1;
-
-            //Console.WriteLine("Sweeping " + lower + " to " + upper);
-
-            //get the pixles in a sweepSize x sweepSize square around the center as a 2d array
-            Color[,] colors = new Color[sweepSize, sweepSize];
-            for (int x = lower; x < upper; x++) {
-                for (int y = lower; y < upper; y++) {
-                    colors[x - lower, y - lower] = bmp.GetPixel(centerInt.Item1 + x, centerInt.Item2 + y);
-                }
-            }
-
-
-            bool[] arch = new bool[(2 * sweepSize) - 1];
-
-
-            for (int x = 0; x < sweepSize; x++) {
-                //top
-                if (colors[x, 0] == p1.color && colors[sweepSize - x - 1, sweepSize - 1] == p2.color) {
-                    arch[x] = true;
-                }
-                else if (colors[x, 0] == p2.color && colors[sweepSize - x - 1, sweepSize - 1] == p1.color) {
-                    arch[x] = true;
-                }
-                //side
-                if (colors[sweepSize - 1, x] == p1.color && colors[sweepSize - x - 1, 0] == p2.color) {
-                    arch[sweepSize - 1 + x] = true;
-                }
-                else if (colors[sweepSize - 1, x] == p2.color && colors[sweepSize - x - 1, 0] == p1.color) {
-                    arch[sweepSize - 1 + x] = true;
-                }
-            }
-
-
-
-            //find the largest range of true values in arch and return the rotation
-            int largestRange = 0;
-            int largestRangeStart = 0;
-            int currentRange = 0;
-            int currentRangeStart = 0;
-            for (int i = 0; i < arch.Length - 1; i++) {
-                if (arch[i]) {
-                    if (currentRange == 0) {
-                        currentRangeStart = i;
-                    }
-                    currentRange++;
-                }
-                else {
-                    if (currentRange > largestRange) {
-                        largestRange = currentRange;
-                        largestRangeStart = currentRangeStart;
-                    }
-                    currentRange = 0;
-                }
-            }
-
-            //if the largest range is 0 return 0
-            if (largestRange == 0) {
-                return -720;
-            }
-
-            //get the average of the start and end of the largest range
-            float angle = (largestRangeStart + largestRangeStart + largestRange) / 2;
-
-            //knowing that 0 in the array is -45 degrees and last is 135 degrees convert the angle to degrees
-            angle = (angle + lower) * (180 / (sweepSize - 1));
-
-            return angle;
-        }
-        
         
         float SweepCheck2(int sweepSize, (int x, int y)centerInt, Province prov) {
             //find all pixles in a round sweep around the center and check if they are the same color as the prov.color and return the average angle of the ones that are
@@ -557,9 +485,9 @@ internal class Program
             List<float> angles = new();
 
             //for each coord check if it is the same color as the prov.color and if it is add the angle to the list
-            foreach ((int x, int y) coord in coords) {
-                if (bmp.GetPixel(centerInt.x + coord.x, centerInt.y + coord.y) == prov.color) {
-                    angles.Add((float)(Math.Atan2(coord.y, coord.x)*180/Math.PI));
+            foreach ((int x, int y) in coords) {
+                if (bmp.GetPixel(centerInt.x + x, centerInt.y + y) == prov.color) {
+                    angles.Add((float)(Math.Atan2(y, x)*180/Math.PI));
                 }
             }
 
@@ -613,7 +541,7 @@ internal class Program
                     //spit on = and get the second part and split it on space and parse each part to int and add it to positions
                     foreach (string pos in l1.Split('=')[1].Split()) {
                         //if it can be cast as an int add it to positions
-                        if (float.TryParse(pos, out float result)) {
+                        if (float.TryParse(pos, NumberStyles.Any, CultureInfo.InvariantCulture, out float result)) {
                             positions.Add((int)result);
                         }
                     }

@@ -32,9 +32,10 @@ B:\desktop\-mods-\INR\Updater\Port Builder 2\Port-Builder-2\obj\Debug\net7.0\Por
 B:\desktop\-mods-\INR\Updater\Port Builder 2\Port-Builder-2\obj\Debug\net7.0\Port Builder 2.AssemblyInfoInputs.cache
 B:\desktop\-mods-\INR\Updater\Port Builder 2\Port-Builder-2\obj\Debug\net7.0\Port Builder 2.AssemblyInfo.cs
 B:\desktop\-mods-\INR\Updater\Port Builder 2\Port-Builder-2\obj\Debug\net7.0\Port Builder 2.csproj.CoreCompileInputs.cache
-B:\desktop\-mods-\INR\Updater\Port Builder 2\Port-Builder-2\obj\Debug\net7.0\Port Builder 2.csproj.CopyComplete
 B:\desktop\-mods-\INR\Updater\Port Builder 2\Port-Builder-2\obj\Debug\net7.0\Port Builder 2.dll
 B:\desktop\-mods-\INR\Updater\Port Builder 2\Port-Builder-2\obj\Debug\net7.0\refint\Port Builder 2.dll
 B:\desktop\-mods-\INR\Updater\Port Builder 2\Port-Builder-2\obj\Debug\net7.0\Port Builder 2.pdb
 B:\desktop\-mods-\INR\Updater\Port Builder 2\Port-Builder-2\obj\Debug\net7.0\Port Builder 2.genruntimeconfig.cache
 B:\desktop\-mods-\INR\Updater\Port Builder 2\Port-Builder-2\obj\Debug\net7.0\ref\Port Builder 2.dll
+B:\desktop\-mods-\INR\Updater\Port Builder 2\Port-Builder-2\obj\Debug\net7.0\Port Builder 2.sourcelink.json
+B:\desktop\-mods-\INR\Updater\Port Builder 2\Port-Builder-2\obj\Debug\net7.0\Port Bui.D3DCB1CD.Up2Date
