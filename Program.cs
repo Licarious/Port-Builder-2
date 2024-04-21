@@ -185,7 +185,7 @@ internal class Program
                 //string[] parts = l1.Split(';');
                 //try parse int
                 if (int.TryParse(parts[0], out int id)) {
-                    Port port = new(id, int.Parse(parts[1]), float.Parse(parts[2]), float.Parse(parts[3]));
+                    Port port = new(id, int.Parse(parts[1]), float.Parse(parts[2], CultureInfo.InvariantCulture), float.Parse(parts[3], CultureInfo.InvariantCulture));
                     //find prov with id
                     foreach (Province prov in provDict.Values) {
                         if (prov.id == id) {

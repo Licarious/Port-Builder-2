@@ -31,7 +31,11 @@ namespace PortBuilder
             rotation.c = (float)Math.Round(rotation.c, 6);
             rotation.s = (float)Math.Round(rotation.s, 6);
 
-            return "\t\t{\n\t\t\tid=" + landID + "\n\t\t\tposition={ " + position.x + " 0.000000 " + position.y + " }\n\t\t\trotation={ 0.000000 " + rotation.c + " 0.000000 " + rotation.s + " }\n\t\t\tscale={ " + scale + " " + scale + " " + scale + " }\n\t\t}\n";
+            return "\t\t{\n\t\t\tid=" + landID + 
+                "\n\t\t\tposition={ " + position.x + " 0.000000 " + position.y + " }" +
+                "\n\t\t\trotation={ " + rotation.c.ToString(System.Globalization.CultureInfo.InvariantCulture) + " 0.000000 " + rotation.s.ToString(System.Globalization.CultureInfo.InvariantCulture) + " }" +
+                "\n\t\t\tscale={ " + scale + " " + scale + " " + scale + " }" +
+                "\n\t\t}\n";
         }
         public string WritePort() {
             return landID + ";" + seaID + ";" + position.x + ";" + position.y+";\n";
